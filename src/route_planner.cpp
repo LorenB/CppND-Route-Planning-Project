@@ -9,8 +9,8 @@ RoutePlanner::RoutePlanner(RouteModel &model, float start_x, float start_y, floa
     end_x *= 0.01;
     end_y *= 0.01;
 
-    std::cout << "start_x: " << start_x << " start_y: " << start_y << std::endl;
-    std::cout << "end_x: " << end_x << " end_y: " << end_y << std::endl;
+    // std::cout << "start_x: " << start_x << " start_y: " << start_y << std::endl;
+    // std::cout << "end_x: " << end_x << " end_y: " << end_y << std::endl;
 
     // TODO 2: Use the m_Model.FindClosestNode method to find the closest nodes to the starting and ending coordinates.
     // Store the nodes you find in the RoutePlanner's start_node and end_node attributes.
@@ -49,7 +49,14 @@ float RoutePlanner::CalculateHValue(RouteModel::Node const *node) {
 // - For each node in current_node.neighbors, add the neighbor to open_list and set the node's visited attribute to true.
 
 void RoutePlanner::AddNeighbors(RouteModel::Node *current_node) {
-
+    current_node->FindNeighbors();
+    for(RouteModel::Node *neighbor : current_node->neighbors) {
+        neighbor->parent = current_node;
+        neighbor->h_value = CalculateHValue(neighbor);
+        neighbor->g_value = current_node->g_value + current_node->distance(*neighbor);
+        neighbor->visited = true;
+        open_list.push_back(neighbor);
+    }
 }
 
 
