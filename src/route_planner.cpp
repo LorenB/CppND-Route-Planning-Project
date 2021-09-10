@@ -24,10 +24,10 @@ RoutePlanner::RoutePlanner(RouteModel &model, float start_x, float start_y, floa
     // std::cout << "some_node_p.x: " << some_node_p->x << std::endl;
 
     start_node = &m_Model.FindClosestNode(start_x, start_y);
-    // std::cout << "assigned start_node" << std::endl;
+    std::cout << "assigned start_node (x: " << start_node->x << ", y: " << start_node->y << ")" << std::endl;
 
     end_node = &m_Model.FindClosestNode(end_x, end_y);
-    // std::cout << "assigned end_node (x: " << end_node->x << ", y: " << end_node->y << ")" << std::endl;
+    std::cout << "assigned end_node (x: " << end_node->x << ", y: " << end_node->y << ")" << std::endl;
 }
 
 // TODO 3: Implement the CalculateHValue method.
@@ -50,14 +50,20 @@ float RoutePlanner::CalculateHValue(RouteModel::Node const *node) {
 // - Use CalculateHValue below to implement the h-Value calculation.
 // - For each node in current_node.neighbors, add the neighbor to open_list and set the node's visited attribute to true.
 
+// TODO: determine if visited neighbors are actually being filtered out???
+
 void RoutePlanner::AddNeighbors(RouteModel::Node *current_node) {
     current_node->FindNeighbors();
     for(RouteModel::Node *neighbor : current_node->neighbors) {
-        neighbor->parent = current_node;
-        neighbor->h_value = CalculateHValue(neighbor);
-        neighbor->g_value = current_node->g_value + current_node->distance(*neighbor);
-        neighbor->visited = true;
-        open_list.push_back(neighbor);
+        if(!neighbor->visited) {
+            neighbor->parent = current_node;
+            neighbor->h_value = CalculateHValue(neighbor);
+            neighbor->g_value = current_node->g_value + current_node->distance(*neighbor);
+            neighbor->visited = true;
+            open_list.push_back(neighbor);
+        } else {
+            std::cout << "skipping (" << neighbor->x << ", " << neighbor->y << ")" << std::endl;
+        }
     }
 }
 
@@ -114,8 +120,8 @@ std::vector<RouteModel::Node> RoutePlanner::ConstructFinalPath(RouteModel::Node 
         if(previous_node) {
             distance += current_node->distance(*previous_node);
         }
-        // std::cout << "node " << i << " x: " << current_node->x << "y: " << current_node->y << std::endl;
-        // std::cout << "current_node->parent: " << current_node->parent << std::endl;
+        std::cout << "node " << i << " x: " << current_node->x << " y: " << current_node->y << std::endl;
+        std::cout << "current_node->parent: " << current_node->parent << std::endl;
         i++;
         // std::cout << "assign current node to it's parent" << std::endl;
         previous_node = current_node;
@@ -139,4 +145,29 @@ std::vector<RouteModel::Node> RoutePlanner::ConstructFinalPath(RouteModel::Node 
 void RoutePlanner::AStarSearch() {
     RouteModel::Node *current_node = nullptr;
     // TODO: Implement your solution here.
+
+    // set start node properties
+    start_node->g_value = 0;
+    start_node->h_value = CalculateHValue(start_node);
+    start_node->parent = nullptr;
+    start_node->visited = true;
+    open_list.push_back(start_node);
+
+    int i = 0;
+
+    while(!open_list.empty()) {
+        i++;
+        std::cout << "i: " << i << " open list size: " << open_list.size() << std::endl;
+        for (auto n : open_list ) {
+            std::cout << "node (" << n->x << ", " << n->y << ")  h: " << n->h_value << "  g: " << n->g_value << "  f: " << n->h_value + n->g_value << std::endl;
+        }
+        
+        current_node = NextNode();
+        std::cout << "current_node (x: " << current_node->x << ", y: " << current_node->y << ")" << std::endl; 
+        if(current_node->x == end_node->x && current_node->y == end_node->y) {
+            break;
+        } else {
+            AddNeighbors(current_node);
+        }
+    }
 }
