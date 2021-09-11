@@ -15,10 +15,7 @@ RoutePlanner::RoutePlanner(RouteModel &model, float start_x, float start_y, floa
     // Store the nodes you find in the RoutePlanner's start_node and end_node attributes.
 
     start_node = &m_Model.FindClosestNode(start_x, start_y);
-    std::cout << "assigned start_node (x: " << start_node->x << ", y: " << start_node->y << ")" << std::endl;
-
     end_node = &m_Model.FindClosestNode(end_x, end_y);
-    std::cout << "assigned end_node (x: " << end_node->x << ", y: " << end_node->y << ")" << std::endl;
 }
 
 // TODO 3: Implement the CalculateHValue method.
@@ -28,8 +25,6 @@ RoutePlanner::RoutePlanner(RouteModel &model, float start_x, float start_y, floa
 
 float RoutePlanner::CalculateHValue(RouteModel::Node const *node) {
     float result = node->distance(*end_node);
-    // std::cout << "node.x: " << node->x << std::endl;
-    // std::cout << "node.y: " << node->y << std::endl;
     return result;
 }
 
@@ -92,12 +87,10 @@ RouteModel::Node *RoutePlanner::NextNode() {
 //   of the vector, the end node should be the last element.
 
 std::vector<RouteModel::Node> RoutePlanner::ConstructFinalPath(RouteModel::Node *current_node) {
-    std::cout << "ConstructFinalPath()..." << std::endl;
     // Create path_found vector
     distance = 0.0f;
     std::vector<RouteModel::Node> path_found;
 
-    // TODO: Implement your solution here.
     RouteModel::Node *previous_node = nullptr;
     while(current_node) {
         path_found.push_back(*current_node);
@@ -111,7 +104,6 @@ std::vector<RouteModel::Node> RoutePlanner::ConstructFinalPath(RouteModel::Node 
     distance *= m_Model.MetricScale(); // Multiply the distance by the scale of the map to get meters.
     std::reverse(path_found.begin(), path_found.end());
     return path_found;
-
 }
 
 
@@ -124,7 +116,6 @@ std::vector<RouteModel::Node> RoutePlanner::ConstructFinalPath(RouteModel::Node 
 
 void RoutePlanner::AStarSearch() {
     RouteModel::Node *current_node = nullptr;
-    // TODO: Implement your solution here.
 
     // set start node properties
     start_node->g_value = 0;
@@ -133,17 +124,8 @@ void RoutePlanner::AStarSearch() {
     start_node->visited = true;
     open_list.push_back(start_node);
 
-    int i = 0;
-
     while(!open_list.empty()) {
-        i++;
-        std::cout << "i: " << i << " open list size: " << open_list.size() << std::endl;
-        for (auto n : open_list ) {
-            std::cout << "node (" << n->x << ", " << n->y << ")  h: " << n->h_value << "  g: " << n->g_value << "  f: " << n->h_value + n->g_value << std::endl;
-        }
-        
         current_node = NextNode();
-        std::cout << "current_node (x: " << current_node->x << ", y: " << current_node->y << ")" << std::endl; 
         if(current_node->x == end_node->x && current_node->y == end_node->y) {
             break;
         } else {

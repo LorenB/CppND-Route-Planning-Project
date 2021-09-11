@@ -53,7 +53,6 @@ void RouteModel::Node::FindNeighbors() {
 
 
 RouteModel::Node &RouteModel::FindClosestNode(float x, float y) {
-    // std::cout <<  std::endl << "FindClosestNode..." << std::endl;
     Node input;
     input.x = x;
     input.y = y;
@@ -61,15 +60,12 @@ RouteModel::Node &RouteModel::FindClosestNode(float x, float y) {
     float min_dist = std::numeric_limits<float>::max();
     float dist;
     int closest_idx;
-    // std::cout << "looping through roads: ";
     int i = 0;
     bool exit_loop = false;
     for (const Model::Road &road : Roads()) {
-        // std::cout << "n" << i << " ";
         i++;
         if (road.type != Model::Road::Type::Footway && !exit_loop) {
             for (int node_idx : Ways()[road.way].nodes) {
-                // std::cout << "ni" << node_idx << " ";
                 dist = input.distance(SNodes()[node_idx]);
                 if (dist < min_dist) {
                     closest_idx = node_idx;
