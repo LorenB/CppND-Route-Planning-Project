@@ -11,17 +11,8 @@ RoutePlanner::RoutePlanner(RouteModel &model, float start_x, float start_y, floa
     end_x *= 0.01;
     end_y *= 0.01;
 
-    // std::cout << "start_x: " << start_x << " start_y: " << start_y << std::endl;
-    // std::cout << "end_x: " << end_x << " end_y: " << end_y << std::endl;
-
     // TODO 2: Use the m_Model.FindClosestNode method to find the closest nodes to the starting and ending coordinates.
     // Store the nodes you find in the RoutePlanner's start_node and end_node attributes.
-    
-    // RouteModel::Node some_node = m_Model.FindClosestNode(start_x, start_y);    
-    // std::cout << "some_node.x: " << some_node.x << std::endl;
-    // RouteModel::Node *some_node_p;
-    // some_node_p = &m_Model.FindClosestNode(start_x, start_y);
-    // std::cout << "some_node_p.x: " << some_node_p->x << std::endl;
 
     start_node = &m_Model.FindClosestNode(start_x, start_y);
     std::cout << "assigned start_node (x: " << start_node->x << ", y: " << start_node->y << ")" << std::endl;
@@ -49,8 +40,6 @@ float RoutePlanner::CalculateHValue(RouteModel::Node const *node) {
 // - For each node in current_node.neighbors, set the parent, the h_value, the g_value. 
 // - Use CalculateHValue below to implement the h-Value calculation.
 // - For each node in current_node.neighbors, add the neighbor to open_list and set the node's visited attribute to true.
-
-// TODO: determine if visited neighbors are actually being filtered out???
 
 void RoutePlanner::AddNeighbors(RouteModel::Node *current_node) {
     current_node->FindNeighbors();
@@ -110,20 +99,11 @@ std::vector<RouteModel::Node> RoutePlanner::ConstructFinalPath(RouteModel::Node 
 
     // TODO: Implement your solution here.
     RouteModel::Node *previous_node = nullptr;
-    int i = 0;
     while(current_node) {
-
-        // std::cout << "about push node i=" << i << std::endl;
-
         path_found.push_back(*current_node);
-        // std::cout << "about update distance for i=" << i << std::endl;
         if(previous_node) {
             distance += current_node->distance(*previous_node);
         }
-        std::cout << "node " << i << " x: " << current_node->x << " y: " << current_node->y << std::endl;
-        std::cout << "current_node->parent: " << current_node->parent << std::endl;
-        i++;
-        // std::cout << "assign current node to it's parent" << std::endl;
         previous_node = current_node;
         current_node = current_node->parent;
     }
