@@ -1,5 +1,5 @@
 # Route Planning Project
-A proof of concept route planner utilizing Dijkstra's algorithm.
+A proof of concept route planner utilizing the A* algorithm.
 
 ## Cloning
 
