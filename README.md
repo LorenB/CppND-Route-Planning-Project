@@ -1,8 +1,5 @@
 # Route Planning Project
-
-This repo contains the starter code for the Route Planning project.
-
-<img src="map.png" width="600" height="450" />
+A proof of concept route planner utilizing Dijkstra's algorithm.
 
 ## Cloning
 
